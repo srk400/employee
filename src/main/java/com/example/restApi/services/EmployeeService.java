@@ -1,54 +1,72 @@
 package com.example.restApi.services;
 
+import com.example.restApi.dto.EmployeeDto;
 import com.example.restApi.entity.Employee;
 import com.example.restApi.repo.EmployeeRepo;
-import lombok.AllArgsConstructor;
-import org.apache.coyote.Response;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class EmployeeService {
 
     private final EmployeeRepo employeeRepo;
 
-    public ResponseEntity<List<Employee>> getAllEmployees(){
-        List<Employee> employees = employeeRepo.findAll();
+    public Employee saveEmployee(EmployeeDto employeeDto) {
 
-        return ResponseEntity.ok(employees);
+        Employee employee = new Employee();
+
+        employee.setName(employeeDto.getName());
+        employee.setEmail(employeeDto.getEmail());
+
+        return employeeRepo.save(employee);
     }
 
-    public ResponseEntity<Employee> getEmployeeById(Long id){
-        Optional<Employee> employee =  employeeRepo.findById(id);
-        Employee employee1 =  employee.get();
-        return ResponseEntity.ok(employee1);
+    public List<EmployeeDto> getAllEmployees() {
+
+        List<Employee> employeeList = employeeRepo.findAll();
+
+        return employeeList.stream()
+                .map(employee -> new EmployeeDto(
+                        employee.getId(),
+                        employee.getName(),
+                        employee.getEmail()
+                ))
+                .toList();
     }
 
-    public ResponseEntity<Employee> saveEmployee(Employee employee){
-        Employee saveEmployee = employeeRepo.save(employee);
-        return ResponseEntity.ok(saveEmployee);
+    public EmployeeDto getEmployeeById(Long id) {
+
+        Employee employeeEntity = employeeRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Employee is not found with id:" + id));
+
+        return new EmployeeDto(
+                employeeEntity.getId(),
+                employeeEntity.getName(),
+                employeeEntity.getEmail()
+        );
     }
 
-    public ResponseEntity<Employee> updateEmployeeById(Employee newEmployee, Long id){
-        Optional<Employee> oldEmployee = employeeRepo.findById(id);
-        Employee updateEmployee = oldEmployee.get();
-        updateEmployee.setEmail(newEmployee.getEmail());
-        updateEmployee.setName(newEmployee.getName());
+    public EmployeeDto updateEmployeeById(Employee employeeDto, Long id) {
 
-        Employee updatedEmployee = employeeRepo.save(updateEmployee);
-      return ResponseEntity.ok(updatedEmployee);
+        Employee employeeEntity = employeeRepo.findById(id).orElseThrow(() -> new RuntimeException("No Employee with id:" + id));
 
+        employeeEntity.setEmail(employeeDto.getEmail());
+        employeeEntity.setName(employeeDto.getName());
+
+        Employee updatedEmployee = employeeRepo.save(employeeEntity);
+
+        return new EmployeeDto(
+                updatedEmployee.getId(),
+                updatedEmployee.getName(),
+                updatedEmployee.getEmail()
+        );
     }
 
-    public ResponseEntity<Void> deleteEmployeeById(Long id){
+    public void deleteEmployeeById(Long id) {
 
         employeeRepo.deleteById(id);
-        return ResponseEntity.ok().build();
-
     }
 }
