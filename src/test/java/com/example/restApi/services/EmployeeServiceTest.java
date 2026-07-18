@@ -48,6 +48,7 @@ class EmployeeServiceTest {
 
     @Test
     void getAllEmployees() {
+
         Employee emp1 = new Employee(1L, "siva", "s@gmail.com");
         Employee emp2 = new Employee(2L, "rama", "r@gmail.com");
 
@@ -69,7 +70,9 @@ class EmployeeServiceTest {
 
     @Test
     void getEmployeeById() {
+
         Long id = 1L;
+
         Employee employeeEntity = new Employee(1L, "siva", "s@gmail.com");
 
         EmployeeDto employeeDto = new EmployeeDto(1L, "siva", "s@gmail.com");
@@ -88,17 +91,19 @@ class EmployeeServiceTest {
 
     @Test
     void getEmployeeByIdNotPresent() {
+
         Long id = 99L;
 
         when(employeeRepo.findById(id)).thenReturn(Optional.empty());
 
         assertThrows(RuntimeException.class, () -> employeeService.getEmployeeById(id));
-
     }
 
     @Test
     void updateEmployeeById() {
+
         Long id = 1L;
+
         Employee emp = new Employee(1L, "siva", "s@gmail.com");
 
         Employee newEmp = new Employee(null, "siva2", "s2@gmail.com");
@@ -120,7 +125,7 @@ class EmployeeServiceTest {
 
     @Test
     void deleteEmployeeById() {
-        
+
         Long id = 1L;
 
         doNothing().when(employeeRepo).deleteById(id);
