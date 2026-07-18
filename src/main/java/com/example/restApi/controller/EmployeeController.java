@@ -1,47 +1,57 @@
 package com.example.restApi.controller;
 
+import com.example.restApi.dto.EmployeeDto;
 import com.example.restApi.entity.Employee;
 import com.example.restApi.services.EmployeeService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
+@RequiredArgsConstructor
 public class EmployeeController {
 
-    @Autowired
-    private EmployeeService employeeService;
+    private final EmployeeService employeeService;
+
+    @PostMapping("/employees")
+    public ResponseEntity<Employee> saveEmployee(@RequestBody EmployeeDto employeeDto) {
+
+        Employee employee = employeeService.saveEmployee(employeeDto);
+
+        return ResponseEntity.ok(employee);
+    }
 
     @GetMapping("/employees")
-    public ResponseEntity<List<Employee>> getAllEmployees(){
+    public ResponseEntity<List<EmployeeDto>> getAllEmployees() {
 
-        return employeeService.getAllEmployees();
+        List<EmployeeDto> enployeeList = employeeService.getAllEmployees();
+
+        return ResponseEntity.ok(enployeeList);
     }
 
     @GetMapping("/employees/{id}")
-    public ResponseEntity<Employee> getEmployeeById(@PathVariable Long id) {
+    public ResponseEntity<EmployeeDto> getEmployeeById(@PathVariable Long id) {
 
-        return employeeService.getEmployeeById(id);
-    }
+        EmployeeDto employeeDto = employeeService.getEmployeeById(id);
 
-    @PostMapping("/employees")
-    public ResponseEntity<Employee> saveEmployee(@RequestBody Employee employee){
-
-        return employeeService.saveEmployee(employee);
-
+        return ResponseEntity.ok(employeeDto);
     }
 
     @PutMapping("/employees/{id}")
-    public void updateEmployeeById(@RequestBody Employee newEmployee,@PathVariable Long id){
+    public ResponseEntity<EmployeeDto> updateEmployeeById(@RequestBody Employee employeeDto, @PathVariable Long id) {
 
-        employeeService.updateEmployeeById(newEmployee,id);
+        EmployeeDto updatedEmployeeDto = employeeService.updateEmployeeById(employeeDto, id);
+
+        return ResponseEntity.ok(updatedEmployeeDto);
     }
 
     @DeleteMapping("/employees/{id}")
-    public void deleteEmployeeById(@PathVariable Long id){
+    public ResponseEntity<Void> deleteEmployeeById(@PathVariable Long id) {
 
         employeeService.deleteEmployeeById(id);
+
+        return ResponseEntity.noContent().build();
     }
 }
