@@ -2,6 +2,7 @@ package com.example.restApi.services;
 
 import com.example.restApi.dto.EmployeeDto;
 import com.example.restApi.entity.Employee;
+import com.example.restApi.mappers.EmployeeMapper;
 import com.example.restApi.repo.EmployeeRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -13,6 +14,7 @@ import java.util.List;
 public class EmployeeService {
 
     private final EmployeeRepo employeeRepo;
+    private final EmployeeMapper employeeMapper;
 
     public Employee saveEmployee(EmployeeDto employeeDto) {
 
@@ -29,11 +31,7 @@ public class EmployeeService {
         List<Employee> employeeList = employeeRepo.findAll();
 
         return employeeList.stream()
-                .map(employee -> new EmployeeDto(
-                        employee.getId(),
-                        employee.getName(),
-                        employee.getEmail()
-                ))
+                .map(employeeMapper::toEmployeeDto)
                 .toList();
     }
 
@@ -42,11 +40,7 @@ public class EmployeeService {
         Employee employeeEntity = employeeRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Employee is not found with id:" + id));
 
-        return new EmployeeDto(
-                employeeEntity.getId(),
-                employeeEntity.getName(),
-                employeeEntity.getEmail()
-        );
+        return employeeMapper.toEmployeeDto(employeeEntity);
     }
 
     public EmployeeDto updateEmployeeById(Employee employeeDto, Long id) {

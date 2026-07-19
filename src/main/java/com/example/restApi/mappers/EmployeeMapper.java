@@ -1,4 +1,4 @@
-package mappers;
+package com.example.restApi.mappers;
 
 import com.example.restApi.dto.EmployeeDto;
 import com.example.restApi.entity.Employee;

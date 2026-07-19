@@ -2,10 +2,11 @@ package com.example.restApi.services;
 
 import com.example.restApi.dto.EmployeeDto;
 import com.example.restApi.entity.Employee;
+import com.example.restApi.mappers.EmployeeMapper;
 import com.example.restApi.repo.EmployeeRepo;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -20,11 +21,15 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class EmployeeServiceTest {
 
+    private final EmployeeMapper employeeMapper = new EmployeeMapper();
     @Mock
     private EmployeeRepo employeeRepo;
-
-    @InjectMocks
     private EmployeeService employeeService;
+
+    @BeforeEach
+    void test() {
+        employeeService = new EmployeeService(employeeRepo, employeeMapper);
+    }
 
 
     @Test
